@@ -54,10 +54,11 @@ body{
 ::-webkit-scrollbar-track{background:var(--bg2);}
 ::-webkit-scrollbar-thumb{background:var(--moss);}
 
+/* WIDER APP CONTAINER */
 .app{
   position:relative;z-index:3;
-  max-width:660px;margin:0 auto;
-  padding:0 14px 80px;
+  max-width:900px;margin:0 auto;
+  padding:0 0 80px; /* Removed side padding for edge-to-edge feel */
 }
 
 .panel{
@@ -66,11 +67,14 @@ body{
   box-shadow:3px 3px 0 rgba(10,25,10,0.5),inset 0 1px 0 rgba(200,232,160,0.08);
   backdrop-filter:blur(1px);
   position:relative;
+  margin: 0 10px; /* Margin to keep it from touching screen edges too tightly */
 }
-.panel::after{
-  content:'';position:absolute;inset:0;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect x='0' y='0' width='1' height='1' fill='rgba(255,255,255,0.025)'/%3E%3C/svg%3E");
-  pointer-events:none;
+
+/* Specific wide override for calendars */
+.panel.wide {
+  margin: 0;
+  border-left: none;
+  border-right: none;
 }
 
 .header-zone{
@@ -255,20 +259,20 @@ body{
 }
 .week-nav button:hover{background:var(--border);}
 .week-lbl{font-size:16px;color:var(--text2);}
-.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;padding:0 10px;}
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;padding:0;}
 .wday{
-  background:rgba(10,25,10,0.5);border:2px solid var(--border);
-  min-height:68px;padding:4px;cursor:pointer;
+  background:rgba(10,25,10,0.5);border:1px solid var(--border);
+  min-height:90px;padding:4px;cursor:pointer;
   transition:all 0.15s;position:relative;
 }
 .wday:hover{border-color:var(--border2);background:rgba(42,72,36,0.7);}
-.wday.today{border-color:var(--firefly);}
+.wday.today{background:rgba(60,80,20,0.3); border:2px solid var(--firefly); z-index: 2;}
 .wday.today .wdn{color:var(--firefly);text-shadow:0 0 6px rgba(232,248,112,0.6);}
 .wdn{font-family:'Press Start 2P';font-size:5px;color:var(--muted);}
 .wdd{font-size:18px;color:var(--text2);margin:2px 0;}
 .wdevs{display:flex;flex-direction:column;gap:1px;}
 .wdev{
-  font-size:11px;padding:1px 3px;
+  font-size:10px;padding:1px 3px;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
   border-left:2px solid;
 }
@@ -279,10 +283,10 @@ body{
 }
 .wday:hover .wday-plus{opacity:1;}
 
-.month-wrap{padding:4px 10px 14px;}
+.month-wrap{padding:4px 0 14px;}
 .month-header{
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 0 8px;
+  padding:0 14px 8px;
 }
 .month-header button{
   background:none;border:2px solid var(--border);
@@ -291,18 +295,18 @@ body{
 }
 .month-header button:hover{background:var(--border);}
 .month-lbl{font-family:'Press Start 2P';font-size:8px;color:var(--highlight);letter-spacing:2px;}
-.month-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.month-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;}
 .mcell-head{
   font-family:'Press Start 2P';font-size:5px;
   color:var(--muted);text-align:center;padding:4px 2px;
 }
 .mcell{
-  background:rgba(10,25,10,0.4);border:1px solid rgba(90,138,80,0.3);
-  min-height:40px;padding:3px;cursor:pointer;
+  background:rgba(10,25,10,0.4);border:1px solid rgba(90,138,80,0.2);
+  min-height:60px;padding:3px;cursor:pointer;
   transition:all 0.15s;position:relative;
 }
 .mcell:hover{background:rgba(42,72,36,0.7);border-color:var(--border);}
-.mcell.today{border-color:var(--firefly);background:rgba(60,80,20,0.5);}
+.mcell.today{border: 2px solid var(--firefly);background:rgba(60,80,20,0.5); z-index: 2;}
 .mcell.today .mn{color:var(--firefly);text-shadow:0 0 6px rgba(232,248,112,0.6);}
 .mcell.other-month .mn{color:var(--muted);opacity:0.4;}
 .mn{font-size:15px;color:var(--text2);}
@@ -424,7 +428,7 @@ body{
   <div class="divider">✿ ✦ ✿ ✦ ✿</div>
 
   <div class="sec-title">🍂 WEEK VIEW</div>
-  <div class="panel week-wrap">
+  <div class="panel wide week-wrap">
     <div class="week-nav">
       <button onclick="chWeek(-1)">◀</button>
       <span class="week-lbl" id="weekLbl">--</span>
@@ -436,7 +440,7 @@ body{
   <div class="divider">❧ ✿ ❧</div>
 
   <div class="sec-title">🌸 MONTH VIEW</div>
-  <div class="panel" style="padding-bottom:8px;">
+  <div class="panel wide" style="padding-bottom:8px;">
     <div class="month-wrap">
       <div class="month-header">
         <button onclick="chMonth(-1)">◀</button>
@@ -667,8 +671,8 @@ function renderWeek(){
     const cell=document.createElement('div');
     cell.className='wday'+(isT?' today':'');
     cell.innerHTML=`<div class="wdn">${dns[i]}</div><div class="wdd">${d.getDate()}</div>
-      <div class="wdevs">${devs.slice(0,2).map(ev=>`<div class="wdev" style="border-color:${ev.color};color:${ev.color};background:${ev.color}18">${ev.name}</div>`).join('')}
-      ${devs.length>2?`<div style="font-size:11px;color:var(--muted)">+${devs.length-2}</div>`:''}</div>
+      <div class="wdevs">${devs.slice(0,3).map(ev=>`<div class="wdev" style="border-color:${ev.color};color:${ev.color};background:${ev.color}18">${ev.name}</div>`).join('')}
+      ${devs.length>3?`<div style="font-size:11px;color:var(--muted)">+${devs.length-3}</div>`:''}</div>
       <span class="wday-plus">＋</span>`;
     cell.onclick=()=>openEvModal(key);
     g.appendChild(cell);
@@ -708,28 +712,56 @@ function renderMonth(){
 }
 function chMonth(d){monthOff+=d;renderMonth();}
 
-function openEvModal(dateKey,idx){
-  editEvKey=dateKey;editEvIdx=idx??-1;
-  document.getElementById('evDate').value=dateKey||todayKey();
-  if(idx!=null&&idx>=0&&events[dateKey]){
-    const ev=events[dateKey][idx];
-    document.getElementById('evName').value=ev.name;
-    document.getElementById('evStart').value=ev.start||'';
-    document.getElementById('evEnd').value=ev.end||'';
-    selColor=ev.color||'#6aaa5a';
-    document.getElementById('evModalTitle').textContent='EDIT EVENT';
-    document.getElementById('delEvBtn').style.display='';
+/* UPDATED: Event modal handling for editing/deleting multiple events */
+function openEvModal(dateKey) {
+  const dayEvents = events[dateKey] || [];
+  
+  if (dayEvents.length > 0) {
+    let msg = "Select an event to edit:\n\n";
+    dayEvents.forEach((ev, i) => {
+      msg += `${i + 1}. ${ev.name} (${ev.start || 'No time'})\n`;
+    });
+    msg += `\nType number to edit, or '0' for a new one.`;
+    
+    const choice = prompt(msg, "0");
+    if (choice === null) return;
+    const idx = parseInt(choice) - 1;
+    
+    if (idx >= 0 && idx < dayEvents.length) {
+      setupEvForm(dateKey, idx);
+    } else {
+      setupEvForm(dateKey, -1);
+    }
   } else {
-    document.getElementById('evName').value='';
-    document.getElementById('evStart').value='';
-    document.getElementById('evEnd').value='';
-    selColor='#6aaa5a';
-    document.getElementById('evModalTitle').textContent='ADD EVENT';
-    document.getElementById('delEvBtn').style.display='none';
+    setupEvForm(dateKey, -1);
+  }
+}
+
+function setupEvForm(dateKey, idx) {
+  editEvKey = dateKey;
+  editEvIdx = idx;
+  document.getElementById('evDate').value = dateKey;
+
+  if (idx >= 0) {
+    const ev = events[dateKey][idx];
+    document.getElementById('evName').value = ev.name;
+    document.getElementById('evStart').value = ev.start || '';
+    document.getElementById('evEnd').value = ev.end || '';
+    selColor = ev.color || '#6aaa5a';
+    document.getElementById('evModalTitle').textContent = 'EDIT EVENT';
+    document.getElementById('delEvBtn').style.display = 'block';
+  } else {
+    document.getElementById('evName').value = '';
+    document.getElementById('evStart').value = '';
+    document.getElementById('evEnd').value = '';
+    selColor = '#6aaa5a';
+    document.getElementById('evModalTitle').textContent = 'ADD EVENT';
+    document.getElementById('delEvBtn').style.display = 'none';
   }
   buildCRow();
   document.getElementById('evModal').classList.add('open');
 }
+
 function buildCRow(){
   const r=document.getElementById('colorRow');r.innerHTML='';
   COLORS.forEach(c=>{
@@ -737,6 +769,7 @@ function buildCRow(){
     b.style.background=c;b.onclick=()=>{selColor=c;buildCRow();};r.appendChild(b);
   });
 }
+
 function saveEv(){
   const name=document.getElementById('evName').value.trim();
   const date=document.getElementById('evDate').value;
@@ -744,14 +777,20 @@ function saveEv(){
   const end=document.getElementById('evEnd').value;
   if(!name||!date){toast('⚠️','Need a name & date!');return;}
   if(!events[date])events[date]=[];
-  if(editEvIdx>=0)events[date][editEvIdx]={name,start,end,color:selColor};
+  
+  if(editEvIdx>=0) events[date][editEvIdx]={name,start,end,color:selColor};
   else events[date].push({name,start,end,color:selColor});
+  
   persist();renderWeek();renderMonth();schedEvNotifs();closeOverlay('evModal');toast('🌸','Event saved!');
 }
+
 function delEv(){
-  if(!editEvKey||editEvIdx<0)return;
-  events[editEvKey].splice(editEvIdx,1);
-  persist();renderWeek();renderMonth();closeOverlay('evModal');toast('🍂','Event removed.');
+  if(!editEvKey || editEvIdx < 0) return;
+  if(confirm("Delete this event?")) {
+    events[editEvKey].splice(editEvIdx, 1);
+    if (events[editEvKey].length === 0) delete events[editEvKey];
+    persist();renderWeek();renderMonth();closeOverlay('evModal');toast('🍂','Event removed.');
+  }
 }
 
 async function askNotif(){
